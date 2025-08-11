@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Clone - Social Media Platform</title>
+    <meta name="description" content="A modern Twitter clone built with React, TypeScript, and Tailwind CSS. Connect, share, and engage with the world.">
+    <meta name="keywords" content="twitter, social media, react, typescript, tailwind">
+    <meta name="author" content="Twitter Clone">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourusername.github.io/twitter-clone/">
+    <meta property="og:title" content="Twitter Clone - Social Media Platform">
+    <meta property="og:description" content="A modern Twitter clone built with React, TypeScript, and Tailwind CSS. Connect, share, and engage with the world.">
+    <meta property="og:image" content="https://yourusername.github.io/twitter-clone/preview.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://yourusername.github.io/twitter-clone/">
+    <meta property="twitter:title" content="Twitter Clone - Social Media Platform">
+    <meta property="twitter:description" content="A modern Twitter clone built with React, TypeScript, and Tailwind CSS. Connect, share, and engage with the world.">
+    <meta property="twitter:image" content="https://yourusername.github.io/twitter-clone/preview.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS for Chinese font support -->
+    <link rel="stylesheet" href="./client/styles.css">
+    
+    <!-- Theme script to prevent flash -->
+    <script>
+        // Prevent flash of wrong theme
+        const theme = localStorage.getItem('theme') || 'light';
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-white dark:bg-black text-black dark:text-white">
+    <div id="root"></div>
+    
+    <!-- For GitHub Pages SPA routing -->
+    <script>
+        // GitHub Pages SPA redirect handler
+        (function(l) {
+            if (l.search[1] === '/' ) {
+                var decoded = l.search.slice(1).split('&').map(function(s) { 
+                    return s.replace(/~and~/g, '&')
+                }).join('?');
+                window.history.replaceState(null, null,
+                    l.pathname.slice(0, -1) + decoded + l.hash
+                );
+            }
+        }(window.location))
+    </script>
+    
+    <!-- Auto-detect Chinese characters and apply appropriate fonts -->
+    <script>
+        // Auto-detect Chinese characters in text content
+        function detectChineseContent() {
+            const chineseRegex = /[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]/;
+            
+            // Function to add Chinese font class to elements with Chinese content
+            function addChineseFontClass(element) {
+                if (element.nodeType === Node.TEXT_NODE) {
+                    if (chineseRegex.test(element.textContent)) {
+                        if (element.parentElement) {
+                            element.parentElement.classList.add('chinese-text');
+                            element.parentElement.setAttribute('lang', 'zh');
+                        }
+                    }
+                } else if (element.nodeType === Node.ELEMENT_NODE) {
+                    Array.from(element.childNodes).forEach(addChineseFontClass);
+                }
+            }
+            
+            // Observer for dynamically added content
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    mutation.addedNodes.forEach(function(node) {
+                        if (node.nodeType === Node.ELEMENT_NODE || node.nodeType === Node.TEXT_NODE) {
+                            addChineseFontClass(node);
+                        }
+                    });
+                });
+            });
+            
+            // Start observing
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+                characterData: true
+            });
+            
+            // Initial detection
+            addChineseFontClass(document.body);
+        }
+        
+        // Run detection when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', detectChineseContent);
+        } else {
+            detectChineseContent();
+        }
+    </script>
+    
+    <script type="module" src="./client/src/main.tsx"></script>
+</body>
+</html>

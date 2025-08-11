@@ -1,0 +1,100 @@
+/* Chinese Font Support */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Font Family Setup */
+:root {
+  --font-family-base: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-chinese: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', sans-serif;
+}
+
+/* Apply Chinese fonts when Chinese characters are detected */
+body {
+  font-family: var(--font-family-base);
+}
+
+/* Chinese character styling */
+[lang="zh"], [lang="zh-CN"], [lang="zh-TW"] {
+  font-family: var(--font-family-chinese);
+}
+
+/* Auto-detect Chinese characters and apply appropriate font */
+.tweet-content,
+.tweet-text,
+.message-content,
+.user-bio,
+.trending-topic {
+  font-family: var(--font-family-base);
+}
+
+/* Enhanced Chinese character detection and styling */
+.tweet-content:lang(zh),
+.tweet-text:lang(zh),
+.message-content:lang(zh),
+.user-bio:lang(zh),
+.trending-topic:lang(zh) {
+  font-family: var(--font-family-chinese);
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Fallback for Chinese characters using Unicode ranges */
+@supports (font-feature-settings: "kern" 1) {
+  .tweet-content,
+  .tweet-text,
+  .message-content {
+    font-feature-settings: "kern" 1;
+  }
+}
+
+/* Chinese punctuation and spacing improvements */
+.chinese-text {
+  font-family: var(--font-family-chinese);
+  letter-spacing: 0.02em;
+  line-height: 1.7;
+}
+
+/* Responsive font sizing for Chinese text */
+@media (max-width: 640px) {
+  .chinese-text {
+    font-size: 0.95em;
+    line-height: 1.65;
+  }
+}
+
+/* Auto-detection utility class */
+.auto-font {
+  font-family: var(--font-family-base);
+}
+
+/* When content contains Chinese characters (CJK Unified Ideographs) */
+.auto-font:has-chinese {
+  font-family: var(--font-family-chinese);
+}
+
+/* Twitter-specific styling integration */
+.twitter-clone {
+  font-family: var(--font-family-base);
+}
+
+.twitter-clone .tweet,
+.twitter-clone .message,
+.twitter-clone .bio {
+  font-family: inherit;
+}
+
+/* Dark mode adjustments for Chinese fonts */
+.dark .chinese-text {
+  font-weight: 400;
+  letter-spacing: 0.025em;
+}
+
+/* Emoji and Chinese character mixing */
+.mixed-content {
+  font-family: var(--font-family-base);
+  font-variant-emoji: unicode;
+}
+
+.mixed-content:lang(zh) {
+  font-family: var(--font-family-chinese), 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', emoji;
+}

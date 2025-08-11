@@ -21,7 +21,7 @@ export function RightSidebar() {
     enabled: !!currentUser,
   });
 
-  const { data: trendingTopics } = useQuery<Array<{ hashtag: string; count: number }>>({
+  const { data: trendingTopics } = useQuery<Array<{ id: string; topic: string; category: string; tweetCount: number }>>({
     queryKey: ["/api/trending"],
   });
 
@@ -32,15 +32,15 @@ export function RightSidebar() {
         <h2 className="text-xl font-bold text-twitter-black dark:text-white mb-4">What's happening</h2>
         <div className="space-y-3">
           {trendingTopics?.slice(0, 5).map((topic, index) => (
-            <div key={topic.hashtag} className="hover:bg-gray-100 dark:hover:bg-gray-800 p-3 rounded-lg cursor-pointer transition-colors">
+            <div key={topic.id || index} className="hover:bg-gray-100 dark:hover:bg-gray-800 p-3 rounded-lg cursor-pointer transition-colors">
               <div className="text-sm text-twitter-dark-gray dark:text-gray-400">
-                Trending in Technology
+                Trending in {topic.category || 'Technology'}
               </div>
               <div className="font-bold text-twitter-black dark:text-white">
-                #{topic.hashtag}
+                {topic.topic}
               </div>
               <div className="text-sm text-twitter-dark-gray dark:text-gray-400">
-                {(topic.count || 0).toLocaleString()} Tweets
+                {(topic.tweetCount || 0).toLocaleString()} Tweets
               </div>
             </div>
           ))}

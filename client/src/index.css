@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -170,4 +171,27 @@
 
 .dark::-webkit-scrollbar-thumb:hover {
   background: hsl(210 3.3898% 56.2745%);
+}
+
+/* Chinese Font Support */
+.chinese-text, 
+[lang="zh"],
+[lang="zh-CN"],
+[lang="zh-TW"] {
+  font-family: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', sans-serif !important;
+}
+
+/* Auto-detect Chinese characters and apply font */
+.tweet-content, .message-content, .user-bio, .trending-topic {
+  font-family: inherit;
+}
+
+/* Enhanced display for mixed Chinese and English content */
+.mixed-content {
+  font-family: 'Noto Sans SC', Inter, system-ui, sans-serif;
+}
+
+/* Apply Chinese fonts to common elements */
+body, p, span, div {
+  font-family: Inter, 'Noto Sans SC', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }

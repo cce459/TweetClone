@@ -18,7 +18,7 @@ export default function Explore() {
     enabled: searchQuery.length > 2,
   });
 
-  const { data: trendingTopics } = useQuery<Array<{ hashtag: string; count: number }>>({
+  const { data: trendingTopics } = useQuery<Array<{ id: string; topic: string; category: string; tweetCount: number }>>({
     queryKey: ["/api/trending"],
   });
 
