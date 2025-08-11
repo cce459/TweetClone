@@ -1,113 +1,88 @@
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useToast } from "@/hooks/use-toast";
+
+interface SuggestedUser {
+  id: string;
+  username: string;
+  name: string;
+  avatar: string;
+  verified: boolean;
+  bio?: string;
+}
 
 export function RightSidebar() {
-  const { toast } = useToast();
+  const { data: currentUser } = useQuery({
+    queryKey: ["/api/user/me"],
+  });
 
-  const trendingTopics = [
-    { category: "Trending in Technology", topic: "#TypeScript", tweets: "42.1K" },
-    { category: "Trending in Web Development", topic: "#ResponsiveDesign", tweets: "28.5K" },
-    { category: "Technology · Trending", topic: "JavaScript Frameworks", tweets: "18.3K" },
-    { category: "Trending", topic: "#DarkMode", tweets: "15.7K" },
-  ];
+  const { data: suggestedUsers } = useQuery<SuggestedUser[]>({
+    queryKey: ["/api/users", currentUser?.id, "suggested"],
+    enabled: !!currentUser,
+  });
 
-  const suggestedUsers = [
-    {
-      id: "user6",
-      name: "Mike Johnson",
-      username: "mikejohnson",
-      avatar: "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?w=100&h=100&fit=crop&crop=face",
-    },
-    {
-      id: "user7",
-      name: "Anna Thompson",
-      username: "annathompson",
-      avatar: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=100&h=100&fit=crop&crop=face",
-    },
-    {
-      id: "user8",
-      name: "Ryan Foster",
-      username: "ryanfoster",
-      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face",
-    },
-  ];
-
-  const handleFollow = (username: string) => {
-    toast({
-      title: "Feature coming soon",
-      description: `Follow functionality for @${username} is being developed.`,
-    });
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast({
-      title: "Feature coming soon",
-      description: "Search functionality is being developed.",
-    });
-  };
+  const { data: trendingTopics } = useQuery<Array<{ hashtag: string; count: number }>>({
+    queryKey: ["/api/trending"],
+  });
 
   return (
-    <aside className="w-80 p-4 space-y-4 hidden lg:block">
-      {/* Search Bar */}
-      <div className="sticky top-4">
-        <form onSubmit={handleSearch} className="relative">
-          <i className="fas fa-search absolute left-4 top-3.5 text-twitter-dark-gray dark:text-gray-400"></i>
-          <Input
-            type="text"
-            placeholder="Search Twitter"
-            className="w-full bg-twitter-extra-light-gray dark:bg-gray-900 border border-transparent focus:border-twitter-blue focus:bg-white dark:focus:bg-gray-800 rounded-full py-3 pl-12 pr-4 text-twitter-black dark:text-white placeholder-twitter-dark-gray dark:placeholder-gray-400 outline-none transition-colors"
-          />
-        </form>
-      </div>
-
+    <aside className="hidden xl:block w-80 p-4 space-y-4">
       {/* Trending */}
-      <div className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden">
-        <h2 className="text-xl font-bold text-twitter-black dark:text-white p-4 border-b border-twitter-extra-light-gray dark:border-gray-800">
-          What's happening
-        </h2>
-        <div className="divide-y divide-twitter-extra-light-gray dark:divide-gray-800">
-          {trendingTopics.map((topic, index) => (
-            <div
-              key={index}
-              className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
-            >
-              <p className="text-sm text-twitter-dark-gray dark:text-gray-400">{topic.category}</p>
-              <p className="font-bold text-twitter-black dark:text-white">{topic.topic}</p>
-              <p className="text-sm text-twitter-dark-gray dark:text-gray-400">{topic.tweets} Tweets</p>
+      <div className="bg-twitter-extra-light-gray dark:bg-gray-900 rounded-2xl p-4">
+        <h2 className="text-xl font-bold text-twitter-black dark:text-white mb-4">What's happening</h2>
+        <div className="space-y-3">
+          {trendingTopics?.slice(0, 5).map((topic, index) => (
+            <div key={topic.hashtag} className="hover:bg-gray-100 dark:hover:bg-gray-800 p-3 rounded-lg cursor-pointer transition-colors">
+              <div className="text-sm text-twitter-dark-gray dark:text-gray-400">
+                Trending in Technology
+              </div>
+              <div className="font-bold text-twitter-black dark:text-white">
+                #{topic.hashtag}
+              </div>
+              <div className="text-sm text-twitter-dark-gray dark:text-gray-400">
+                {(topic.count || 0).toLocaleString()} Tweets
+              </div>
             </div>
           ))}
+          <Button variant="ghost" className="text-twitter-blue hover:bg-twitter-blue hover:bg-opacity-10 p-3 rounded-full w-full text-left justify-start">
+            Show more
+          </Button>
         </div>
       </div>
 
-      {/* Who to Follow */}
-      <div className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden">
-        <h2 className="text-xl font-bold text-twitter-black dark:text-white p-4 border-b border-twitter-extra-light-gray dark:border-gray-800">
-          Who to follow
-        </h2>
-        <div className="divide-y divide-twitter-extra-light-gray dark:divide-gray-800">
-          {suggestedUsers.map((user) => (
-            <div key={user.id} className="p-4 flex items-center justify-between">
+      {/* Who to follow */}
+      <div className="bg-twitter-extra-light-gray dark:bg-gray-900 rounded-2xl p-4">
+        <h2 className="text-xl font-bold text-twitter-black dark:text-white mb-4">Who to follow</h2>
+        <div className="space-y-3">
+          {suggestedUsers?.slice(0, 3).map((user) => (
+            <div key={user.id} className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <Avatar className="w-12 h-12">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback>{user.name[0]}</AvatarFallback>
                 </Avatar>
-                <div>
-                  <p className="font-bold text-twitter-black dark:text-white">{user.name}</p>
-                  <p className="text-sm text-twitter-dark-gray dark:text-gray-400">@{user.username}</p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center space-x-1">
+                    <h3 className="font-bold text-twitter-black dark:text-white truncate">
+                      {user.name}
+                    </h3>
+                    {user.verified && (
+                      <i className="fas fa-check-circle text-twitter-blue text-sm"></i>
+                    )}
+                  </div>
+                  <p className="text-twitter-dark-gray dark:text-gray-400 text-sm truncate">
+                    @{user.username}
+                  </p>
                 </div>
               </div>
-              <Button
-                onClick={() => handleFollow(user.username)}
-                className="bg-twitter-black dark:bg-white text-white dark:text-black font-bold py-2 px-4 rounded-full hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
-              >
+              <Button className="bg-twitter-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 font-bold py-1 px-4 rounded-full">
                 Follow
               </Button>
             </div>
           ))}
+          <Button variant="ghost" className="text-twitter-blue hover:bg-twitter-blue hover:bg-opacity-10 p-3 rounded-full w-full text-left justify-start">
+            Show more
+          </Button>
         </div>
       </div>
     </aside>

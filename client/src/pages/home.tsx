@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link, useLocation } from "wouter";
 import { Sidebar } from "@/components/sidebar";
 import { RightSidebar } from "@/components/right-sidebar";
 import { TweetComposer } from "@/components/tweet-composer";
@@ -9,9 +10,11 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "@/hooks/use-theme";
 import { TweetWithAuthor } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
   const [isTweetModalOpen, setIsTweetModalOpen] = useState(false);
+  const [location] = useLocation();
   const { setTheme, theme } = useTheme();
 
   const { data: tweets, isLoading } = useQuery<TweetWithAuthor[]>({
@@ -64,18 +67,26 @@ export default function Home() {
       {/* Mobile Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-black border-t border-twitter-extra-light-gray dark:border-gray-800 lg:hidden z-50">
         <div className="flex justify-around py-3">
-          <Button variant="ghost" className="p-2 text-twitter-black dark:text-white">
-            <i className="fas fa-home text-xl"></i>
-          </Button>
-          <Button variant="ghost" className="p-2 text-twitter-dark-gray dark:text-gray-400">
-            <i className="fas fa-search text-xl"></i>
-          </Button>
-          <Button variant="ghost" className="p-2 text-twitter-dark-gray dark:text-gray-400">
-            <i className="fas fa-bell text-xl"></i>
-          </Button>
-          <Button variant="ghost" className="p-2 text-twitter-dark-gray dark:text-gray-400">
-            <i className="fas fa-envelope text-xl"></i>
-          </Button>
+          <Link href="/">
+            <Button variant="ghost" className={cn("p-2", location === "/" ? "text-twitter-blue" : "text-twitter-dark-gray dark:text-gray-400")}>
+              <i className="fas fa-home text-xl"></i>
+            </Button>
+          </Link>
+          <Link href="/explore">
+            <Button variant="ghost" className={cn("p-2", location === "/explore" ? "text-twitter-blue" : "text-twitter-dark-gray dark:text-gray-400")}>
+              <i className="fas fa-search text-xl"></i>
+            </Button>
+          </Link>
+          <Link href="/notifications">
+            <Button variant="ghost" className={cn("p-2", location === "/notifications" ? "text-twitter-blue" : "text-twitter-dark-gray dark:text-gray-400")}>
+              <i className="fas fa-bell text-xl"></i>
+            </Button>
+          </Link>
+          <Link href="/messages">
+            <Button variant="ghost" className={cn("p-2", location === "/messages" ? "text-twitter-blue" : "text-twitter-dark-gray dark:text-gray-400")}>
+              <i className="fas fa-envelope text-xl"></i>
+            </Button>
+          </Link>
         </div>
       </div>
 

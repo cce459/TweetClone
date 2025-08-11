@@ -63,47 +63,74 @@ export function TweetModal({ open, onOpenChange }: TweetModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-2xl mx-4 max-h-96">
-        <DialogHeader className="flex items-center justify-between p-4 border-b border-twitter-extra-light-gray dark:border-gray-800">
-          <DialogTitle className="sr-only">Compose Tweet</DialogTitle>
-          <Button
-            onClick={() => onOpenChange(false)}
-            variant="ghost"
-            className="text-twitter-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded-full transition-colors"
-          >
-            <i className="fas fa-times text-xl"></i>
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={!canTweet || createTweetMutation.isPending}
-            className="bg-twitter-blue hover:bg-twitter-dark-blue text-white font-bold py-2 px-6 rounded-full transition-colors duration-200"
-          >
-            {createTweetMutation.isPending ? "Posting..." : "Tweet"}
-          </Button>
+      <DialogContent className="max-w-xl">
+        <DialogHeader>
+          <DialogTitle className="sr-only">Compose tweet</DialogTitle>
         </DialogHeader>
-        <div className="p-4">
-          <form onSubmit={handleSubmit} className="flex space-x-3">
-            <Avatar className="w-12 h-12">
-              <AvatarImage src={currentUser?.avatar} alt={currentUser?.name} />
-              <AvatarFallback>{currentUser?.name?.[0] || "U"}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-              <Textarea
-                placeholder="What's happening?"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                className="w-full resize-none border-none outline-none bg-transparent text-xl placeholder-twitter-dark-gray dark:placeholder-gray-400 text-twitter-black dark:text-white min-h-[150px] focus-visible:ring-0"
-                maxLength={280}
-                autoFocus
-              />
-              <div className="flex items-center justify-end mt-3">
-                <span className={`text-sm mr-3 ${content.length > 260 ? 'text-twitter-red' : 'text-twitter-dark-gray dark:text-gray-400'}`}>
+        <form onSubmit={handleSubmit} className="flex space-x-3">
+          <Avatar className="w-12 h-12 flex-shrink-0">
+            <AvatarImage src={currentUser?.avatar} alt={currentUser?.name} />
+            <AvatarFallback>{currentUser?.name?.[0] || "U"}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1">
+            <Textarea
+              placeholder="What's happening?"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              className="w-full resize-none border-none outline-none bg-transparent text-xl placeholder-twitter-dark-gray dark:placeholder-gray-400 text-twitter-black dark:text-white min-h-[120px] focus-visible:ring-0"
+              maxLength={280}
+              autoFocus
+            />
+            <div className="flex items-center justify-between mt-4 pt-4 border-t border-twitter-extra-light-gray dark:border-gray-800">
+              <div className="flex space-x-4">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="text-twitter-blue hover:bg-twitter-blue hover:bg-opacity-10 p-2 rounded-full transition-colors"
+                >
+                  <i className="fas fa-image"></i>
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="text-twitter-blue hover:bg-twitter-blue hover:bg-opacity-10 p-2 rounded-full transition-colors"
+                >
+                  <i className="fas fa-film"></i>
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="text-twitter-blue hover:bg-twitter-blue hover:bg-opacity-10 p-2 rounded-full transition-colors"
+                >
+                  <i className="fas fa-poll"></i>
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="text-twitter-blue hover:bg-twitter-blue hover:bg-opacity-10 p-2 rounded-full transition-colors"
+                >
+                  <i className="fas fa-smile"></i>
+                </Button>
+              </div>
+              <div className="flex items-center space-x-3">
+                <span className={`text-sm ${content.length > 260 ? 'text-twitter-red' : 'text-twitter-dark-gray dark:text-gray-400'}`}>
                   {280 - content.length}
                 </span>
+                <Button
+                  type="submit"
+                  disabled={!canTweet || createTweetMutation.isPending}
+                  className="bg-twitter-blue hover:bg-twitter-dark-blue text-white font-bold py-2 px-6 rounded-full disabled:opacity-50 transition-colors duration-200"
+                >
+                  {createTweetMutation.isPending ? "Posting..." : "Tweet"}
+                </Button>
               </div>
             </div>
-          </form>
-        </div>
+          </div>
+        </form>
       </DialogContent>
     </Dialog>
   );
