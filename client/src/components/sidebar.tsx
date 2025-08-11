@@ -44,16 +44,17 @@ export function Sidebar({ onTweetClick }: SidebarProps) {
         <ul className="space-y-2">
           {navItems.map((item) => (
             <li key={item.path}>
-              <Link href={item.path}>
-                <a className={cn(
+              <Link 
+                href={item.path}
+                className={cn(
                   "flex items-center space-x-3 p-3 rounded-full transition-colors font-medium",
                   location === item.path
                     ? "text-twitter-black dark:text-white bg-twitter-extra-light-gray dark:bg-gray-900"
                     : "text-twitter-dark-gray dark:text-gray-400 hover:bg-twitter-extra-light-gray dark:hover:bg-gray-900"
-                )}>
-                  <i className={`${item.icon} text-xl w-6`}></i>
-                  <span>{item.label}</span>
-                </a>
+                )}
+              >
+                <i className={`${item.icon} text-xl w-6`}></i>
+                <span>{item.label}</span>
               </Link>
             </li>
           ))}

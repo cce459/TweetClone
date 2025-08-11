@@ -13,7 +13,10 @@ interface TweetCardProps {
 
 export function TweetCard({ tweet }: TweetCardProps) {
   const [isLiked, setIsLiked] = useState(false);
+  const [isRetweeted, setIsRetweeted] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
   const [likeCount, setLikeCount] = useState(tweet.likes || 0);
+  const [retweetCount, setRetweetCount] = useState(tweet.retweets || 0);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -48,6 +51,54 @@ export function TweetCard({ tweet }: TweetCardProps) {
     likeMutation.mutate();
   };
 
+  const retweetMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("POST", `/api/tweets/${tweet.id}/retweet`, {
+        userId: currentUser?.id,
+      });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setIsRetweeted(data.retweeted);
+      setRetweetCount(prev => data.retweeted ? prev + 1 : prev - 1);
+      queryClient.invalidateQueries({ queryKey: ["/api/tweets"] });
+      toast({
+        title: data.retweeted ? "Retweeted" : "Retweet undone",
+        description: data.retweeted ? "Tweet retweeted to your followers" : "Retweet removed",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to retweet. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const bookmarkMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("POST", `/api/tweets/${tweet.id}/bookmark`, {
+        userId: currentUser?.id,
+      });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setIsBookmarked(data.bookmarked);
+      toast({
+        title: data.bookmarked ? "Bookmarked" : "Bookmark removed",
+        description: data.bookmarked ? "Tweet saved to bookmarks" : "Tweet removed from bookmarks",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to bookmark. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleReply = (e: React.MouseEvent) => {
     e.stopPropagation();
     toast({
@@ -58,10 +109,14 @@ export function TweetCard({ tweet }: TweetCardProps) {
 
   const handleRetweet = (e: React.MouseEvent) => {
     e.stopPropagation();
-    toast({
-      title: "Feature coming soon",
-      description: "Retweet functionality is being developed.",
-    });
+    if (!currentUser) return;
+    retweetMutation.mutate();
+  };
+
+  const handleBookmark = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!currentUser) return;
+    bookmarkMutation.mutate();
   };
 
   const handleShare = (e: React.MouseEvent) => {
@@ -109,9 +164,9 @@ export function TweetCard({ tweet }: TweetCardProps) {
           <p className="text-twitter-black dark:text-white mt-1 break-words">
             {tweet.content}
           </p>
-          {tweet.image && (
+          {tweet.images && tweet.images.length > 0 && (
             <img
-              src={tweet.image}
+              src={tweet.images[0]}
               alt="Tweet attachment"
               className="mt-3 rounded-2xl max-w-full h-auto border border-twitter-extra-light-gray dark:border-gray-700"
             />
@@ -131,10 +186,16 @@ export function TweetCard({ tweet }: TweetCardProps) {
               variant="ghost"
               size="sm"
               onClick={handleRetweet}
-              className="flex items-center space-x-2 text-twitter-dark-gray dark:text-gray-400 hover:text-green-500 hover:bg-green-500 hover:bg-opacity-10 p-2 rounded-full transition-colors"
+              disabled={retweetMutation.isPending}
+              className={cn(
+                "flex items-center space-x-2 p-2 rounded-full transition-colors",
+                isRetweeted
+                  ? "text-green-500 hover:bg-green-500 hover:bg-opacity-10"
+                  : "text-twitter-dark-gray dark:text-gray-400 hover:text-green-500 hover:bg-green-500 hover:bg-opacity-10"
+              )}
             >
-              <i className="fas fa-retweet"></i>
-              <span className="text-sm">{tweet.retweets}</span>
+              <i className={`fas fa-retweet ${retweetMutation.isPending ? 'animate-pulse' : ''}`}></i>
+              <span className="text-sm">{retweetCount}</span>
             </Button>
             <Button
               variant="ghost"
@@ -150,6 +211,20 @@ export function TweetCard({ tweet }: TweetCardProps) {
             >
               <i className={`fas fa-heart ${likeMutation.isPending ? 'animate-pulse' : ''}`}></i>
               <span className="text-sm">{likeCount}</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleBookmark}
+              disabled={bookmarkMutation.isPending}
+              className={cn(
+                "p-2 rounded-full transition-colors",
+                isBookmarked
+                  ? "text-twitter-blue hover:bg-twitter-blue hover:bg-opacity-10"
+                  : "text-twitter-dark-gray dark:text-gray-400 hover:text-twitter-blue hover:bg-twitter-blue hover:bg-opacity-10"
+              )}
+            >
+              <i className={`${isBookmarked ? 'fas fa-bookmark' : 'far fa-bookmark'} ${bookmarkMutation.isPending ? 'animate-pulse' : ''}`}></i>
             </Button>
             <Button
               variant="ghost"
